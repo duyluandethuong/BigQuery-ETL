@@ -1,4 +1,4 @@
-# BigQuery-ETL
+# BigQuery ETL framework
 A script and guide on how to move data from data sources to staging and build a complete data warehouse on BigQuery
 
 # Supported data sources
@@ -6,11 +6,17 @@ RDBMS in general
 MongoDB
 
 # Tools to build data pipeline
+
 Apache NiFi: https://nifi.apache.org
+
 Python3 and libs
+
 Google Cloud Storage (staging source to store data)
+
 Google BigQuery (data warehouse)
+
 Google Service Account JSON key file
+
 Jenkins (to schedule and manage job scheduling)
 
 That's it! So cheap and efficient

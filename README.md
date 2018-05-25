@@ -10,6 +10,7 @@ Apache NiFi: https://nifi.apache.org
 Python3 and libs
 Google Cloud Storage (staging source to store data)
 Google BigQuery (data warehouse)
+Google Service Account JSON key file
 Jenkins (to schedule and manage job scheduling)
 
 That's it! So cheap and efficient
@@ -40,6 +41,16 @@ The MERGE script do the following things:
 3. Run MERGE (upsert) query to perform insert / update with the data loaded in to Google Cloud Storage
 
 Data on Google Cloud Storage is set to be self-deleted after 7 days from the loaded time. This approach reduces the timestamp management phase that normally sees in traditional ETLs.
+
+# How to data is stored on Google Cloud Storage
+
+You must have a bucket to store all the AVRO files emmitted by NiFi. NiFi saves us from building a brand new ETL script to move data from soruces to GCS.
+You can structure anyway you want, but make sure that:
+
+1. On BigQuery, you must have a `staging` dataset, contains extenal tables point to data files on GCS
+2. You also need a `warehouse` dataset, contains internal table which will store data from the MERGE scripts
+3. You also need a `metadata` dataset, contains the instructions for the pipeline jobs to run. The structure of the metadata table is described in the following section.
+You can modify metadata dataset name in the file `etl/bigquery_staging_to_warehouse/src/bigquery_merge_table.py`
 
 # Metadata table
 
@@ -129,23 +140,23 @@ The `job_object_json` is a `1-line JSON string` contain information to run the j
 Please note that the JSON must be flatten without any \n (new line)
 
 ```json
-{"main_dataset_name":"tenren_dwh","staging_dataset_name":"tenren_staging","table_name":"sale_order","last_load_column_
-name":"updated_at","mongodb_db_name":"Sale","mongodb_collection_name":"SaleOrder","merge_job_name":"merge_tenren_sale_order","config":{"is_tenren_sale_order":1}}
+{"main_dataset_name":"dwh","staging_dataset_name":"staging","table_name":"sale_order","last_load_column_
+name":"updated_at","mongodb_db_name":"Sale","mongodb_collection_name":"SaleOrder","merge_job_name":"merge_sale_order","config":{}}
 ```
 
 JSON Explanation
 
 ```json
 {
-  "main_dataset_name": "tenren_dwh",
-  "staging_dataset_name": "tenren_staging",
+  "main_dataset_name": "dwh",
+  "staging_dataset_name": "staging",
   "table_name": "sale_order",
   "last_load_column_name": "updated_at",
   "mongodb_db_name": "Sale",
   "mongodb_collection_name": "SaleOrder",
-  "merge_job_name": "merge_tenren_sale_order",
+  "merge_job_name": "<job name>",
   "config": #optional {
-    "is_tenren_sale_order": 1 #for sale order only
+    
   }
 }
 

@@ -2,7 +2,9 @@
 A script and guide on how to move data from data sources to staging and build a complete data warehouse on BigQuery
 
 # Supported data sources
-RDBMS in general
+
+Any RDBMS in general
+
 MongoDB
 
 # Tools to build data pipeline
